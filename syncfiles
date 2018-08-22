@@ -1,0 +1,80 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2018 Nigel Horne, njh@bandsman.co.uk
+# Usage is subject to licence terms.
+# The licence terms of this software are as follows:
+# Personal single user, single computer use: GPL2
+# All other users (including Commercial, Charity, Educational, Government)
+# must apply in writing for a licence for use from Nigel Horne at the
+# above e-mail.
+
+# Copy all files in a given directory to a date based hierecachy in a number
+# of places (@targets). The dates of last access and modification are preserved.
+
+# For example "sync_files /tmp/foo" will copy all of the files last modified
+# on 22/8/18 in /tmp/foo to /target1/2018/August/22, /target2/2018/August/22
+# and so on.
+
+# I use this to take lots of copies of photographs to many disks for backup,
+# and have them sorted by date.
+
+use strict;
+use warnings;
+use autodie qw(:all);
+use File::Util;
+use File::stat;
+use File::Copy;
+use File::Spec;
+use DateTime;
+
+my @targets = qw(
+	/backups/seagate/njh/Photos
+	/backups/WD2/njh/Photos
+	/backups/MyBook/njh/Photos
+);
+
+my @months = qw(
+	January	February	March
+	April	May		June
+	July	August		September
+	October	November	December
+);
+
+die "Usage: $0 directory" unless($ARGV[0]);
+
+chdir $ARGV[0];
+
+my @sources = File::Util->new()->list_dir('.' => {
+	files_only => 1,
+	recurse => 1,
+});
+
+foreach my $src(@sources) {
+	$src =~ s/^\.\///;
+	my $mtime = stat($src)->mtime();
+	my $atime = stat($src)->atime();
+	my $dt = DateTime->from_epoch(epoch => $mtime);
+
+	my $year = $dt->year();
+	my $month = "$year/" . $months[$dt->month() - 1];
+	my $day = $dt->day();
+	if($day < 10) {
+		$day = "$month/0" . $dt->day();
+	} else {
+		$day = "$month/" . $dt->day();
+	}
+
+	foreach my $target(@targets) {
+		foreach my $dir($year, $month, $day) {
+			my $d = File::Spec->catfile($target, $dir);
+			if(!-d $d) {
+				print "Making $d\n";
+				mkdir $d;
+			}
+		}
+		my $dest = File::Spec->catfile($target, $day, $src);
+		print "copying $src to $dest\n";
+		copy($src, $dest);
+		utime($atime, $mtime, $dest);
+	}
+}
