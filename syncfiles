@@ -27,10 +27,12 @@ use File::Copy;
 use File::Spec;
 use DateTime;
 
+# /backups/seagate/njh/Photos
+# /backups/WD2/njh/Photos
+# /backups/MyBook/njh/Photos
 my @targets = qw(
-	/backups/seagate/njh/Photos
-	/backups/WD2/njh/Photos
-	/backups/MyBook/njh/Photos
+	/backups/seagate/njh/drone
+	/backups/WD2/njh/drone
 );
 
 my @months = qw(
@@ -51,8 +53,12 @@ my @sources = File::Util->new()->list_dir('.' => {
 
 foreach my $src(@sources) {
 	$src =~ s/^\.\///;
-	my $mtime = stat($src)->mtime();
-	my $atime = stat($src)->atime();
+	my $s = stat($src);
+	if(!defined($s)) {
+		die "$src: $!";
+	}
+	my $mtime = $s->mtime();
+	my $atime = $s->atime();
 	my $dt = DateTime->from_epoch(epoch => $mtime);
 
 	my $year = $dt->year();
