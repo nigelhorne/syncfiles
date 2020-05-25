@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2018 Nigel Horne, njh@bandsman.co.uk
+# Copyright (C) 2018-2020 Nigel Horne, njh@bandsman.co.uk
 # Usage is subject to licence terms.
 # The licence terms of this software are as follows:
 # Personal single user, single computer use: GPL2
@@ -15,8 +15,8 @@
 # on 22/8/18 in /tmp/foo to /target1/2018/August/22, /target2/2018/August/22
 # and so on.
 
-# I use this to take lots of copies of photographs to many disks for backup,
-# and have them sorted by date.
+# I use this to take lots of copies of photographs, recordings and videos
+# to many discs for backup, and have them sorted by date so that I can find them
 
 use strict;
 use warnings;
@@ -27,12 +27,13 @@ use File::Copy;
 use File::Spec;
 use DateTime;
 
-# /backups/seagate/njh/Photos
-# /backups/WD2/njh/Photos
-# /backups/MyBook/njh/Photos
+	# /backups/seagate/njh/Videos/drone
+	# /backups/WD2/njh/Videos/drone
 my @targets = qw(
-	/backups/seagate/njh/drone
-	/backups/WD2/njh/drone
+	/backups/seagate/njh/Photos
+	/backups/WD2/njh/Photos
+	/backups/MyBook/njh/Photos
+	/backups/backup3/njh/Photos
 );
 
 my @months = qw(
