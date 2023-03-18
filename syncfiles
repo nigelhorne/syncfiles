@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2018-2020 Nigel Horne, njh@bandsman.co.uk
+# Copyright (C) 2018-2023 Nigel Horne, njh@bandsman.co.uk
 # Usage is subject to licence terms.
 # The licence terms of this software are as follows:
 # Personal single user, single computer use: GPL2
@@ -27,13 +27,16 @@ use File::Copy;
 use File::Spec;
 use DateTime;
 
+	# /backups/seagate/njh/Videos
+	# /backups/WD2/njh/Videos
+
 	# /backups/seagate/njh/Videos/drone
 	# /backups/WD2/njh/Videos/drone
 my @targets = qw(
 	/backups/seagate/njh/Photos
 	/backups/WD2/njh/Photos
-	/backups/MyBook/njh/Photos
 	/backups/backup3/njh/Photos
+	/backups/MyBook/njh/Photos
 );
 
 my @months = qw(
@@ -83,5 +86,6 @@ foreach my $src(@sources) {
 		print "copying $src to $dest\n";
 		copy($src, $dest);
 		utime($atime, $mtime, $dest);
+		chmod 0440, $dest;
 	}
 }
