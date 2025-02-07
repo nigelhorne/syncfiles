@@ -1,4 +1,7 @@
-# Backup Script README
+syncfiles
+=========
+
+# Backup Script
 
 ## Overview
 This script automates the backup of files from a specified directory into a date-organized hierarchy across multiple backup locations.
@@ -65,5 +68,3 @@ and have them sorted by date.
 
 ## Contact
 For licensing inquiries, contact: **Nigel Horne** (njh@bandsman.co.uk).
-
-
