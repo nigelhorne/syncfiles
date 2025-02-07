@@ -55,5 +55,5 @@ jobs:
       - name: Run Perl Linter
         run: |
           perlcritic --severity 5 syncfiles
-          # perl -MO=Lint ./ntpdate
-          perl -c -Mwarnings::unused ./ntpdate
+          perl -MO=Lint ./syncfiles
+          perl -c -Mwarnings::unused ./syncfiles
