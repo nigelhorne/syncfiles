@@ -50,7 +50,7 @@ jobs:
 
       - name: Install Perl::Critic and linters
         run: |
-          cpanm -iqn Perl::Critic B::Lint warnings::unused
+          cpanm -iqn Perl::Critic B::Lint warnings::unused IPC::System::Simple
 
       - name: Run Perl Linter
         run: |
