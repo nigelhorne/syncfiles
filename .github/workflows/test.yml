@@ -4,10 +4,10 @@ name: Backup Script CI
 on:
   push:
     branches:
-      - main
+      - '*'
+    tags-ignore:
+      - '*'
   pull_request:
-    branches:
-      - main
   schedule:
     - cron: '0 2 * * *'  # Runs daily at 2 AM UTC
 
@@ -26,7 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cpanm --installdeps --notest .
+          cpanm -iqn File::Util File::stat File::Copy File::Spec DateTime File::Path Try::Tiny Log::Log4perl
 
       - name: Run backup script test
         run: |
@@ -48,10 +48,12 @@ jobs:
         with:
           perl-version: '5.32'
 
-      - name: Install Perl::Critic
+      - name: Install Perl::Critic and linters
         run: |
-          cpanm Perl::Critic
+          cpanm -iqn Perl::Critic B::Lint warnings::unused
 
       - name: Run Perl Linter
         run: |
           perlcritic --severity 5 syncfiles
+          # perl -MO=Lint ./ntpdate
+          perl -c -Mwarnings::unused ./ntpdate
