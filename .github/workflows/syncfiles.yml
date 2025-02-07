@@ -50,7 +50,8 @@ jobs:
 
       - name: Install Perl::Critic and linters
         run: |
-          cpanm -iqn Perl::Critic B::Lint warnings::unused IPC::System::Simple
+          cpanm -iqn File::Util File::stat File::Copy File::Spec DateTime File::Path Try::Tiny Log::Log4perl IPC::System::Simple
+          cpanm -iqn Perl::Critic B::Lint warnings::unused
 
       - name: Run Perl Linter
         run: |
