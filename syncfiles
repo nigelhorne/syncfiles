@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2018-2023 Nigel Horne, njh@bandsman.co.uk
+# Copyright (C) 2018-2025 Nigel Horne, njh@bandsman.co.uk
 # Usage is subject to licence terms.
 # The licence terms of this software are as follows:
 # Personal single user, single computer use: GPL2
@@ -26,6 +26,20 @@ use File::stat;
 use File::Copy;
 use File::Spec;
 use DateTime;
+use File::Path qw(make_path);
+use Try::Tiny;
+use Log::Log4perl;
+
+# Initialize logging
+Log::Log4perl->init(\<<'END');
+log4perl.logger = INFO, Logfile
+log4perl.appender.Logfile = Log::Log4perl::Appender::File
+log4perl.appender.Logfile.filename = /tmp/syncfiles.log
+log4perl.appender.Logfile.layout = Log::Log4perl::Layout::PatternLayout
+log4perl.appender.Logfile.layout.ConversionPattern = %d [%p] %m%n
+END
+
+my $logger = Log::Log4perl->get_logger();
 
 	# /backups/seagate/njh/Videos
 	# /backups/WD2/njh/Videos
@@ -40,52 +54,62 @@ my @targets = qw(
 );
 
 my @months = qw(
-	January	February	March
-	April	May		June
-	July	August		September
-	October	November	December
+	January February March April May June July August September October November December
 );
 
-die "Usage: $0 directory" unless($ARGV[0]);
+die "Usage: $0 directory" unless $ARGV[0];
 
-chdir $ARGV[0];
+chdir $ARGV[0] or die "Cannot change directory to $ARGV[0]: $!";
 
 my @sources = File::Util->new()->list_dir('.' => {
 	files_only => 1,
 	recurse => 1,
 });
 
-foreach my $src(@sources) {
+foreach my $src (@sources) {
 	$src =~ s/^\.\///;
-	my $s = stat($src);
-	if(!defined($s)) {
-		die "$src: $!";
-	}
+	
+	my $s = stat($src) or do {
+		$logger->error("Failed to stat $src: $!");
+		next;
+	};
+	
 	my $mtime = $s->mtime();
 	my $atime = $s->atime();
 	my $dt = DateTime->from_epoch(epoch => $mtime);
-
+	
 	my $year = $dt->year();
 	my $month = "$year/" . $months[$dt->month() - 1];
-	my $day = $dt->day();
-	if($day < 10) {
-		$day = "$month/0" . $dt->day();
-	} else {
-		$day = "$month/" . $dt->day();
-	}
-
-	foreach my $target(@targets) {
-		foreach my $dir($year, $month, $day) {
+	my $day = sprintf('%s/%02d', $month, $dt->day());
+	
+	foreach my $target (@targets) {
+		foreach my $dir ($year, $month, $day) {
 			my $d = File::Spec->catfile($target, $dir);
-			if(!-d $d) {
-				print "Making $d\n";
-				mkdir $d;
+			if (!-d $d) {
+				try {
+					make_path($d);
+					$logger->info("Created directory: $d");
+				} catch {
+					$logger->error("Failed to create directory $d: $_");
+				};
 			}
 		}
+		
 		my $dest = File::Spec->catfile($target, $day, $src);
-		print "copying $src to $dest\n";
-		copy($src, $dest);
-		utime($atime, $mtime, $dest);
-		chmod 0440, $dest;
+		
+		if (!-e $dest) {
+			try {
+				copy($src, $dest);
+				utime($atime, $mtime, $dest);
+				chmod 0440, $dest;
+				$logger->info("Copied $src to $dest");
+			} catch {
+				$logger->error("Failed to copy $src to $dest: $_");
+			};
+		} else {
+			$logger->info("Skipped existing file: $dest");
+		}
 	}
 }
+
+$logger->info("Backup completed successfully");

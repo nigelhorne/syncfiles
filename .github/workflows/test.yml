@@ -1,0 +1,57 @@
+---
+name: Backup Script CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 2 * * *'  # Runs daily at 2 AM UTC
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.32'
+
+      - name: Install dependencies
+        run: |
+          cpanm --installdeps --notest .
+
+      - name: Run backup script test
+        run: |
+          perl syncfiles /tmp/test_directory
+
+      - name: Verify logs
+        run: |
+          test -f /tmp/syncfiles.log && echo "Log file exists" || exit 1
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.32'
+
+      - name: Install Perl::Critic
+        run: |
+          cpanm Perl::Critic
+
+      - name: Run Perl Linter
+        run: |
+          perlcritic --severity 5 syncfiles
