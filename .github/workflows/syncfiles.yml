@@ -30,7 +30,7 @@ jobs:
 
       - name: Run backup script test
         run: |
-          perl syncfiles /tmp/test_directory
+          mkdir /tmp/test_directory && perl syncfiles /tmp/test_directory
 
       - name: Verify logs
         run: |
