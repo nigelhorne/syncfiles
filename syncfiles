@@ -30,13 +30,23 @@ use File::Path qw(make_path);
 use Try::Tiny;
 use Log::Log4perl;
 
-# Initialize logging
+# Initialize logging to a logfile and the terminal
+# Set stderr = 0 to ensure it prints to STDOUT instead of STDERR
 Log::Log4perl->init(\<<'END');
-log4perl.logger = INFO, Logfile
+log4perl.logger = INFO, Logfile, Screen
+
+# File appender
 log4perl.appender.Logfile = Log::Log4perl::Appender::File
 log4perl.appender.Logfile.filename = /tmp/syncfiles.log
 log4perl.appender.Logfile.layout = Log::Log4perl::Layout::PatternLayout
 log4perl.appender.Logfile.layout.ConversionPattern = %d [%p] %m%n
+
+# Screen (STDOUT) appender
+log4perl.appender.Screen = Log::Log4perl::Appender::Screen
+log4perl.appender.Screen.stderr = 0
+log4perl.appender.Screen.layout = Log::Log4perl::Layout::PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern = %d [%p] %m%n
+
 END
 
 my $logger = Log::Log4perl->get_logger();
