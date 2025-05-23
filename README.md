@@ -13,7 +13,7 @@ It ensures that timestamps (access and modification times) are preserved and tha
 - Skips existing files to prevent redundant copies
 
 ## Requirements
-- Perl 5+
+- Perl 5
 - Required Perl modules:
   - `File::Util`
   - `File::stat`
@@ -64,4 +64,4 @@ and have them sorted by date.
 - For commercial, charity, educational, or government use, a license is required.
 
 ## Contact
-For licensing inquiries, contact: **Nigel Horne** (njh@bandsman.co.uk).
+For licensing inquiries, contact: **Nigel Horne** (njh@nigelhorne.com).

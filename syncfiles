@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2018-2025 Nigel Horne, njh@bandsman.co.uk
+# Copyright (C) 2018-2025 Nigel Horne, njh@nigelhorne.com
 # Usage is subject to licence terms.
 # The licence terms of this software are as follows:
 # Personal single user, single computer use: GPL2
@@ -78,20 +78,20 @@ my @sources = File::Util->new()->list_dir('.' => {
 
 foreach my $src (@sources) {
 	$src =~ s/^\.\///;
-	
+
 	my $s = stat($src) or do {
 		$logger->error("Failed to stat $src: $!");
 		next;
 	};
-	
+
 	my $mtime = $s->mtime();
 	my $atime = $s->atime();
 	my $dt = DateTime->from_epoch(epoch => $mtime);
-	
+
 	my $year = $dt->year();
 	my $month = "$year/" . $months[$dt->month() - 1];
 	my $day = sprintf('%s/%02d', $month, $dt->day());
-	
+
 	foreach my $target (@targets) {
 		foreach my $dir ($year, $month, $day) {
 			my $d = File::Spec->catfile($target, $dir);
@@ -104,9 +104,9 @@ foreach my $src (@sources) {
 				};
 			}
 		}
-		
+
 		my $dest = File::Spec->catfile($target, $day, $src);
-		
+
 		if (!-e $dest) {
 			try {
 				copy($src, $dest);
