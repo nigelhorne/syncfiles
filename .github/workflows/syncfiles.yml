@@ -1,5 +1,7 @@
 ---
 name: Backup Script CI
+permissions:
+  contents: read
 
 on:
   push:
