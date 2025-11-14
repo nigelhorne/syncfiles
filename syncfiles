@@ -27,6 +27,7 @@ use File::Copy;
 use File::Spec;
 use DateTime;
 use File::Path qw(make_path);
+use Readonly::Values::Months;
 use Try::Tiny;
 use Log::Log4perl;
 
@@ -63,10 +64,6 @@ my @targets = qw(
 	/backups/MyBook/njh/Photos
 );
 
-my @months = qw(
-	January February March April May June July August September October November December
-);
-
 die "Usage: $0 directory" unless $ARGV[0];
 
 chdir $ARGV[0] or die "Cannot change directory to $ARGV[0]: $!";
@@ -89,7 +86,7 @@ foreach my $src (@sources) {
 	my $dt = DateTime->from_epoch(epoch => $mtime);
 
 	my $year = $dt->year();
-	my $month = "$year/" . $months[$dt->month() - 1];
+	my $month = "$year/" . ucfirst($month_names[$dt->month() - 1]);
 	my $day = sprintf('%s/%02d', $month, $dt->day());
 
 	foreach my $target (@targets) {
