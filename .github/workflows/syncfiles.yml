@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cpanm -iqn File::Util File::stat File::Copy File::Spec DateTime File::Path Try::Tiny Log::Log4perl IPC::System::Simple
+          cpanm -iqn File::Util File::stat File::Copy File::Spec DateTime File::Path Try::Tiny Log::Log4perl IPC::System::Simple Readonly::Values::Months
 
       - name: Run backup script test
         run: |
@@ -53,7 +53,7 @@ jobs:
       - name: Install Perl::Critic and linters
         run: |
           cpanm -iqn File::Util File::stat File::Copy File::Spec DateTime File::Path Try::Tiny Log::Log4perl IPC::System::Simple
-          cpanm -iqn Perl::Critic B::Lint warnings::unused
+          cpanm -iqn Perl::Critic B::Lint warnings::unused Readonly::Values::Months
 
       - name: Run Perl Linter
         run: |
