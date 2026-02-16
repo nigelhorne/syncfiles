@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2018-2025 Nigel Horne, njh@nigelhorne.com
+# Copyright (C) 2018-2026 Nigel Horne, njh@nigelhorne.com
 # Usage is subject to licence terms.
 # The licence terms of this software are as follows:
 # Personal single user, single computer use: GPL2
@@ -21,6 +21,7 @@
 use strict;
 use warnings;
 use autodie qw(:all);
+
 use File::Util;
 use File::stat;
 use File::Copy;
@@ -119,4 +120,4 @@ foreach my $src (@sources) {
 	}
 }
 
-$logger->info("Backup completed successfully");
+$logger->info('Backup completed successfully');
